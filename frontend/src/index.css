@@ -1,0 +1,737 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────── base */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #FFFBF5;
+  color: #1C0A00;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────────────── keyframes */
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(40px, -60px) scale(1.08); }
+  66%       { transform: translate(-50px, 40px) scale(0.94); }
+}
+
+@keyframes orb-float-r {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-50px, 50px) scale(1.06); }
+  66%       { transform: translate(40px, -40px) scale(0.96); }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.25); }
+  50%       { transform: scaleY(1); }
+}
+
+@keyframes steam-rise {
+  0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+  40%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-32px) scaleX(1.5); }
+}
+
+@keyframes pop-spring {
+  0%   { transform: scale(0) rotate(-8deg); opacity: 0; }
+  55%  { transform: scale(1.12) rotate(2deg); }
+  75%  { transform: scale(0.96) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes slide-up-spring {
+  0%   { transform: translateY(40px); opacity: 0; }
+  60%  { transform: translateY(-6px); opacity: 1; }
+  80%  { transform: translateY(3px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float-food {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-16px) rotate(6deg); }
+  66%       { transform: translateY(8px) rotate(-4deg); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes chip-spring {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progress-glow-in {
+  from { width: 0%; }
+}
+
+@keyframes confetti-fly {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  80% { opacity: 0.8; }
+  100% {
+    transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────── ambient background orbs */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-orb-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(254,243,199,0.9) 0%, rgba(253,230,138,0.4) 60%, transparent 100%);
+  top: -250px; left: -200px;
+  animation: orb-float 22s ease-in-out infinite;
+}
+.bg-orb-2 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(187,247,208,0.7) 0%, rgba(110,231,183,0.3) 60%, transparent 100%);
+  bottom: -150px; right: -150px;
+  animation: orb-float-r 28s ease-in-out infinite;
+}
+.bg-orb-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(254,215,170,0.6) 0%, rgba(253,186,116,0.2) 60%, transparent 100%);
+  top: 45%; right: 5%;
+  animation: orb-float 18s ease-in-out infinite 6s;
+}
+
+/* ──────────────────────────────────────────── animation utilities */
+.anim-pop-spring {
+  animation: pop-spring 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.anim-slide-up {
+  animation: slide-up-spring 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.anim-chip {
+  animation: chip-spring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.anim-slide-down {
+  animation: slide-down 0.28s ease-out both;
+}
+
+/* ────────────────────────────────────────────────── glass cards */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 20px 48px rgba(249, 115, 22, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.glass-warm {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 24px 56px rgba(249, 115, 22, 0.1),
+    0 6px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* ────────────────────────────────────────────── recipe picker cards */
+.recipe-card {
+  border-radius: 1.25rem;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease,
+    border-color 0.2s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 32px 56px rgba(249, 115, 22, 0.16),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.recipe-card:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* gradient zones per badge type */
+.card-zone-healthy { background: linear-gradient(145deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%); }
+.card-zone-comfort { background: linear-gradient(145deg, #FCE7F3 0%, #FBCFE8 50%, #F9A8D4 100%); }
+.card-zone-quick   { background: linear-gradient(145deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%); }
+
+/* badge pills */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.badge-pill--healthy { background: linear-gradient(135deg, #16A34A, #22C55E); }
+.badge-pill--comfort { background: linear-gradient(135deg, #BE185D, #EC4899); }
+.badge-pill--quick   { background: linear-gradient(135deg, #D97706, #F59E0B); }
+
+/* ─────────────────────────────────────────── step checklist items */
+.step-item {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.125rem 1.25rem;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.9);
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  user-select: none;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    border-color 0.2s ease;
+}
+
+.step-item:hover {
+  border-color: rgba(252, 211, 77, 0.6);
+  box-shadow: 0 8px 28px rgba(249,115,22,0.11), inset 0 1px 0 rgba(255,255,255,1);
+  transform: translateY(-1px);
+}
+
+.step-item:active {
+  transform: scale(0.98);
+}
+
+.step-item--done {
+  background: rgba(240, 253, 244, 0.85);
+  border-color: rgba(134, 239, 172, 0.5);
+}
+
+.step-item--done .step-detail-text {
+  opacity: 0.55;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1C0A00;
+  transition: all 0.2s ease;
+}
+
+.step-item--done .step-title {
+  text-decoration: line-through;
+  color: #9CA3AF;
+}
+
+.step-number {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #F97316, #FB923C);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.step-number--done {
+  background: linear-gradient(135deg, #16A34A, #22C55E);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35);
+}
+
+/* ──────────────────────────────────────────────── progress bar */
+.progress-bar {
+  width: 100%;
+  height: 0.875rem;
+  background: rgba(243, 244, 246, 0.8);
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(90deg, #16A34A, #22C55E, #4ADE80, #86EFAC);
+  background-size: 200% 100%;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.5), 0 0 4px rgba(34, 197, 94, 0.3);
+  animation: shimmer 2s linear infinite, progress-glow-in 0.6s ease-out;
+}
+
+/* ───────────────────────────────────────────────── accordion */
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.125rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1C0A00;
+  background: rgba(254, 243, 199, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 0.875rem;
+  cursor: pointer;
+  border: 1.5px solid rgba(254, 243, 199, 0.9);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-align: left;
+}
+
+.accordion-trigger:hover {
+  background: rgba(253, 230, 138, 0.5);
+  border-color: rgba(253, 230, 138, 0.9);
+}
+
+.accordion-chevron {
+  flex-shrink: 0;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.accordion-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ──────────────────────────────────────────────── confetti */
+.confetti-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 40%;
+  left: 50%;
+  border-radius: 2px;
+  animation: confetti-fly 1.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* ─────────────────────────────────────── waveform bars */
+.wave-bar {
+  width: 5px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, #F97316, #FB923C);
+  transform-origin: bottom center;
+  animation: waveform 1s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(249,115,22,0.4);
+}
+
+/* ──────────────────────────────── ingredient chips */
+.ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(255, 251, 245, 0.9);
+  border: 1.5px solid rgba(252, 211, 77, 0.5);
+  color: #78350F;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+}
+
+.ing-chip:hover {
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow: 0 4px 14px rgba(249,115,22,0.13), inset 0 1px 0 rgba(255,255,255,1);
+  transform: translateY(-1px) scale(1.03);
+  background: rgba(255, 247, 237, 0.95);
+}
+
+/* ────────────────────────────────────────── mic button */
+.mic-btn {
+  position: relative;
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  color: white;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  z-index: 1;
+}
+
+.mic-btn--idle {
+  background: linear-gradient(145deg, #FB923C, #F97316, #EA6C00);
+  box-shadow: 0 12px 32px rgba(249, 115, 22, 0.45), 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.mic-btn--idle:hover {
+  transform: scale(1.07);
+  box-shadow: 0 20px 48px rgba(249, 115, 22, 0.55), 0 8px 20px rgba(249, 115, 22, 0.35);
+}
+
+.mic-btn--recording {
+  background: linear-gradient(145deg, #F87171, #EF4444, #DC2626);
+  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.5), 0 4px 12px rgba(239, 68, 68, 0.3);
+  animation: mic-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 12px 32px rgba(239, 68, 68, 0.5), 0 4px 12px rgba(239, 68, 68, 0.3); }
+  50%       { box-shadow: 0 16px 48px rgba(239, 68, 68, 0.7), 0 8px 24px rgba(239, 68, 68, 0.4); }
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(239, 68, 68, 0.5);
+  animation: pulse-ring 1.4s ease-out infinite;
+}
+
+.pulse-ring-2 {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.25);
+  animation: pulse-ring 1.4s ease-out infinite 0.4s;
+}
+
+/* ──────────────────────────────────── meta chip */
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(254, 243, 199, 0.7);
+  border: 1px solid rgba(252, 211, 77, 0.4);
+  color: #78350F;
+}
+
+/* ─────────────────────────────────── step timeline */
+.step-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-row {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+}
+
+/* left column: circle button + connecting line */
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 2.25rem;
+  flex-shrink: 0;
+}
+
+.step-circle-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.step-circle-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.step-circle-btn:active {
+  transform: scale(0.92);
+}
+
+/* vertical connector line between steps */
+.step-connector {
+  width: 2px;
+  flex: 1;
+  min-height: 1.25rem;
+  margin: 4px 0;
+  border-radius: 1px;
+  transition: background 0.4s ease;
+}
+
+/* right column: step card */
+.step-card-new {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: 1rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.88);
+  padding: 0.875rem 1.125rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.2s ease,
+    background 0.25s ease;
+}
+
+.step-card-new:hover {
+  border-color: rgba(252, 211, 77, 0.55);
+  transform: translateX(3px);
+  box-shadow: 0 8px 28px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.step-card-new:active {
+  transform: translateX(1px) scale(0.99);
+}
+
+.step-card-new--done {
+  background: rgba(240, 253, 244, 0.82);
+  border-color: rgba(134, 239, 172, 0.45);
+  opacity: 0.82;
+}
+
+.step-card-new--done:hover {
+  border-color: rgba(134, 239, 172, 0.7);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* card header row: badge + title left, time chip right */
+.step-card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-card-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1C0A00;
+  transition: color 0.2s ease;
+}
+
+.step-card-title--done {
+  text-decoration: line-through;
+  color: #9CA3AF;
+}
+
+/* action sentence — first sentence of step detail */
+.step-action-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1C0A00;
+  line-height: 1.65;
+  margin: 0;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.step-action-text--done {
+  color: #9CA3AF;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* insight / science callout box */
+.step-insight-box {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  background: rgba(254, 243, 199, 0.5);
+  border-radius: 0.75rem;
+  border-left: 3px solid rgba(249, 115, 22, 0.3);
+  backdrop-filter: blur(4px);
+}
+
+.step-insight-icon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  line-height: 1;
+}
+
+.step-insight-text {
+  font-size: 0.8rem;
+  color: #78350F;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* cooking technique highlights */
+.technique-term {
+  display: inline;
+  background: rgba(249, 115, 22, 0.1);
+  color: #C2410C;
+  font-weight: 600;
+  font-style: italic;
+  padding: 0.05em 0.25em;
+  border-radius: 0.25rem;
+  border-bottom: 1.5px dashed rgba(249, 115, 22, 0.45);
+  transition: background 0.2s ease;
+}
+
+.technique-term:hover {
+  background: rgba(249, 115, 22, 0.18);
+}
+
+/* ─────────────────────────────── step action GIF sticker */
+@keyframes step-gif-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-5px) rotate(3deg); }
+  66%       { transform: translateY(-2px) rotate(-1deg); }
+}
+
+.step-gif-wrap {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background: rgba(255, 251, 245, 0.95);
+  position: relative;
+  align-self: flex-start;
+}
+
+.step-gif {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: block;
+}
+
+.step-gif--loaded {
+  opacity: 1;
+  animation:
+    pop-spring 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    step-gif-float 4s ease-in-out infinite 0.6s;
+}
+
+.step-gif-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 245, 245, 0.8) 0%,
+    rgba(220, 220, 220, 0.9) 50%,
+    rgba(245, 245, 245, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+.step-gif-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  animation: step-gif-float 4s ease-in-out infinite;
+}
+
+/* done state: give the wrap a green glow ring */
+.step-card-new--done .step-gif-wrap {
+  border-color: rgba(134, 239, 172, 0.8);
+  box-shadow:
+    0 4px 12px rgba(34, 197, 94, 0.2),
+    0 0 0 3px rgba(134, 239, 172, 0.25);
+}
+
+/* time chip inside step card */
+.step-time-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(255, 251, 245, 0.9);
+  border: 1px solid rgba(252, 211, 77, 0.45);
+  color: #92400E;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(249, 115, 22, 0.08);
+}
