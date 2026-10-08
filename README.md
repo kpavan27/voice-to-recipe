@@ -1,163 +1,60 @@
-# 🍳 Voice-to-Recipe Generator
+# Voice-to-Recipe
 
-An AI-powered application that converts voice notes about ingredients into sustainable recipes with carbon footprint analysis and nutritional information.
+Say what's in your fridge and get three recipe options (healthy, comfort, quick), each with a carbon-footprint score and a nutrition breakdown.
 
-## ✨ Features
+`🎤 voice → Whisper transcription → ingredient extraction → recipe matching → CO₂ + nutrition scoring → React UI`
 
-- **🎤 Voice Input**: Record your ingredients using your microphone
-- **🤖 AI Processing**: Advanced speech-to-text and ingredient extraction
-- **🍽️ Recipe Generation**: Intelligent recipe creation based on available ingredients
-- **🌱 Sustainability Scoring**: Carbon footprint analysis and environmental impact
-- **📊 Nutrition Analysis**: Detailed nutritional breakdown (calories, protein, carbs, fat)
-- **🎨 Beautiful UI**: Modern, responsive interface with smooth animations
-- **📱 Mobile Friendly**: Works perfectly on desktop and mobile devices
+## How it works
 
-## 🚀 Quick Start
+| Stage | Implementation |
+|---|---|
+| Speech-to-text | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) `small` model (int8; uses GPU if available), loaded lazily on first request |
+| Ingredient extraction | Three-layer matcher (`src/processing/extract.py`): synonym map with 157 entries → direct match → partial match |
+| Recipes | Curated recipe templates across 15 cuisines (`src/processing/recipe.py`); three options are returned per query |
+| Sustainability | Per-ingredient CO₂e from `carbon_db.json` (76 ingredients, based on Poore & Nemecek 2018), compared with an average recipe |
+| Nutrition | Calories, protein, carbs and fat from `nutrition_db.json` (76 ingredients, USDA-based) |
+| Frontend | React + TypeScript + Vite + Tailwind; records with the browser MediaRecorder API |
 
-### Prerequisites
+## Run it
 
-- Python 3.8 or higher
-- Node.js 14 or higher
-- Microphone access for voice recording
+```bash
+# backend
+pip install -r requirements.txt
+uvicorn src.api.main:app --reload --port 8000     # API docs at http://localhost:8000/docs
 
-### Backend Setup
+# frontend (in a second terminal)
+cd frontend && npm install && npm run dev
+```
 
-1. **Install Python dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+The frontend runs on http://localhost:5175. No API keys are needed, because everything runs locally.
 
-2. **Start the FastAPI server:**
-   ```bash
-   python main.py
-   ```
-   
-   The API will be available at `http://localhost:8000`
+### API
 
-### Frontend Setup
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/process-voice` | Audio file → transcript, ingredients, recipes, CO₂ and nutrition |
+| `GET` | `/sample` | Example response without recording |
+| `GET` | `/ingredients` | Ingredients the matcher recognises |
+| `GET` | `/health` | Liveness check |
 
-1. **Navigate to the frontend directory:**
-   ```bash
-   cd frontend
-   ```
+## Tests
 
-2. **Install Node.js dependencies:**
-   ```bash
-   npm install
-   ```
+```bash
+pytest          # tests/: API, extraction and recipe logic
+```
 
-3. **Start the React development server:**
-   ```bash
-   npm start
-   ```
-   
-   The app will open at `http://localhost:3000`
+## Layout
 
-## 🎯 How to Use
+```
+src/api/            FastAPI app
+src/processing/     extract.py (ingredients), recipe.py (recipe templates)
+frontend/           React + TypeScript UI
+*_db.json           carbon, nutrition and ingredient-synonym data
+tests/              pytest suite
+```
 
-1. **Open the application** in your web browser
-2. **Click "Start Recording"** and speak your ingredients (e.g., "I have chicken, tomatoes, rice, and garlic")
-3. **Click "Stop Recording"** when finished
-4. **Click "Generate Recipe"** to process your voice and create a recipe
-5. **View your recipe** with sustainability metrics and cooking instructions
+## Limitations and next steps
 
-## 🛠️ Technical Architecture
-
-### Backend (Python/FastAPI)
-- **Speech-to-Text**: OpenAI Whisper model for accurate transcription
-- **Ingredient Extraction**: Advanced keyword matching and fuzzy search
-- **Recipe Generation**: Intelligent recipe templates based on ingredient types
-- **Sustainability Analysis**: Carbon footprint calculation using comprehensive databases
-- **Nutrition Analysis**: Detailed nutritional information per ingredient
-
-### Frontend (React)
-- **Voice Recording**: Browser MediaRecorder API
-- **Real-time UI**: Dynamic updates with loading states and error handling
-- **Responsive Design**: Mobile-first approach with beautiful animations
-- **Accessibility**: Keyboard navigation and screen reader support
-
-### Data Sources
-- **Carbon Database**: CO₂ emissions data for 70+ ingredients
-- **Nutrition Database**: Comprehensive nutritional information
-- **Ingredient Mapping**: 150+ ingredient variations and synonyms
-
-## 📊 Supported Ingredients
-
-The application recognizes a wide variety of ingredients including:
-
-- **Proteins**: Chicken, beef, pork, fish, eggs, tofu, beans, lentils
-- **Vegetables**: Tomatoes, onions, garlic, carrots, broccoli, spinach, peppers
-- **Grains**: Rice, pasta, bread, quinoa, oats
-- **Dairy**: Milk, cheese, yogurt, butter
-- **Fruits**: Apples, bananas, oranges, berries, avocados
-- **Spices**: Curry, paprika, cumin, cinnamon, ginger, herbs
-- **Oils**: Olive oil, coconut oil, vegetable oil
-
-## 🌱 Sustainability Features
-
-- **Carbon Footprint Analysis**: Real-time CO₂ emissions calculation
-- **Sustainability Rating**: Easy-to-understand environmental impact scores
-- **Carbon Savings**: Comparison with average recipe emissions
-- **Eco-friendly Suggestions**: Recommendations for sustainable cooking
-
-## 🔧 Configuration
-
-### Backend Configuration
-- Modify `main.py` to adjust API settings
-- Update database files (`carbon_db.json`, `nutrition_db.json`, `ingredient_map.json`)
-- Configure CORS origins for different environments
-
-### Frontend Configuration
-- Update API endpoint in `frontend/src/App.js` if needed
-- Modify styling in `frontend/src/App.css`
-- Configure build settings in `frontend/package.json`
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Microphone not working**: Check browser permissions and try refreshing
-2. **API connection failed**: Ensure backend is running on port 8000
-3. **No ingredients detected**: Try speaking more clearly and using common ingredient names
-4. **Slow processing**: This is normal for the first request as models load
-
-### Error Messages
-
-- **"No speech detected"**: Speak louder or check microphone
-- **"No ingredients found"**: Try using more specific ingredient names
-- **"Request timed out"**: Check your internet connection and try again
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- OpenAI Whisper for speech recognition
-- FastAPI for the backend framework
-- React for the frontend framework
-- Poore & Nemecek for carbon footprint data
-- USDA for nutritional information
-
-## 🔮 Future Enhancements
-
-- [ ] Multi-language support
-- [ ] Recipe difficulty adjustment
-- [ ] Ingredient substitution suggestions
-- [ ] Cooking time optimization
-- [ ] Dietary restriction filtering
-- [ ] Recipe sharing and saving
-- [ ] Voice command shortcuts
-- [ ] Integration with smart kitchen devices
-
----
-
-**Built with ❤️ for sustainable cooking | Powered by AI**
+- Recipes come from templates, not a generative model. Swapping in an LLM or a recipe API would widen coverage, at the cost of reproducibility.
+- The carbon figures are per-ingredient averages and don't account for quantities or sourcing.
+- Next: dietary filters, ingredient substitutions, and multi-language speech input (Whisper already supports it).
